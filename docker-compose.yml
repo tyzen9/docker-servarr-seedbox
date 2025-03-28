@@ -2,14 +2,14 @@ name: servarr
 
 services:
     # *****************************************************************************
-    # docker-pia-servarr
+    # docker-servarr-seedbox
     #
     # Author: Steve Theisen (steve@tyzen9.com)
     #         www.tyzen9.com  -  https://www.github.com/tyzen9
     #
-    # If there is an *Arr service below you do not plan to use, then simply 
-    # comment it's section out by placing a '#' symbol before each line of the 
-    # ENTIRE section. 
+    # If there is a service below you do not plan to use, then simply comment its
+    # it's section out by placing a '#' symbol before each line of the ENTIRE 
+    # section. 
     #
     # This Docker Stack expects a properly configured ".env" file.  Please make a 
     # copy of the "sample.env" file called ".env" and configure it properly for 
@@ -19,97 +19,21 @@ services:
     #
     # *****************************************************************************
 
-    # Sonarr - TV show searching services
-    sonarr:
-        image: lscr.io/linuxserver/sonarr:latest
-        container_name: sonarr
-        restart: always
-        environment:
-            - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
-        volumes:
-            - sonarr-config:/config
-            - ${TV_VOLUME}:/tv
-            - downloads:/downloads
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
-            - prowlarr
-
-    # Radarr - Movie searching services
-    radarr:
-        image: lscr.io/linuxserver/radarr:latest
-        container_name: radarr
-        restart: always
-        environment:
-            - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
-        volumes:
-            - radarr-config:/config
-            - ${MOVIE_VOLUME}:/movies
-            - downloads:/downloads
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
-            - prowlarr
-
-    # Readarr - Audio and eBook searching services
-    readarr:
-        # Readarr is currently releasing from their "develop" branch
-        image: lscr.io/linuxserver/readarr:develop
-        container_name: readarr
-        restart: always
-        environment:
-            - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
-        volumes:
-            - readarr-config:/config
-            - ${BOOKS_VOLUME}:/books
-            - downloads:/downloads
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
-            - prowlarr
-            
-    # !~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!
-    # 
-    #                           ---- WARNING ----
-    #
-    #           DO NOT MAKE CHANGES IN THIS FILE BELOW THIS SECTION
-    #                  (unless you know what you are doing)
-    #        Everything below here is considered required for this stack
-    #    
-    # !~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!!~~~!~~~!
-
-    # ************************************************************************
-    # prowlarr
-    #    Prowlarr is an indexer manager and proxy that helps integrate various 
-    #    PVR (Personal Video Recorder) applications by managing both Torrent 
-    #    Trackers and Usenet Indexers. It works suggested that this be used 
-    #    with all Sonarr services to consolidate indexer configurations
-    # ************************************************************************
-    prowlarr:
-        image: lscr.io/linuxserver/prowlarr:latest
-        container_name: prowlarr
-        restart: always
-        environment:
-            - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
-        volumes:
-            - prowlarr-config:/config
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
-
     # ************************************************************************
     # pia-vpn
-    #    This AWESEOME PIA wireguard VPN is created and maintained by thrnz
+    #    This AWESOME PIA wireguard VPN is created and maintained by thrnz
     #    For details on this container, and the available options be sure to 
     #    check out: https://github.com/thrnz/docker-wireguard-pia
+    #
+    #    This VPN will secure ALL traffic for this stack, you can see this in 
+    #    these configuration tags:
+    #
+    #        network_mode: "service:vpn"
+    #        depends_on:
+    #          - vpn
+    #
+    #   Action: This should be considered required, visit PIA to get started
+    #           https://www.privateinternetaccess.com/buy-vpn-online
     # ************************************************************************
     vpn:
         image: thrnz/docker-wireguard-pia:latest
@@ -153,10 +77,116 @@ services:
             retries: 3
 
     # ************************************************************************
+    # prowlarr
+    #    Prowlarr is an indexer manager and proxy that helps integrate various 
+    #    PVR (Personal Video Recorder) applications by managing both Torrent 
+    #    Trackers and Usenet Indexers. It works suggested that this be used 
+    #    with all Sonarr services to consolidate indexer configurations
+    #
+    #  Action: if you plan to use an *arr service, then you probably want
+    #          Prowlarr so you can centralize all indexer configuration in
+    #          one place.
+    # ************************************************************************
+    prowlarr:
+        image: lscr.io/linuxserver/prowlarr:latest
+        container_name: prowlarr
+        restart: always
+        environment:
+            - PUID=${PUID:-1000}
+            - PGID=${GUID:-1000}
+            - TZ=${TZ_ID}
+        volumes:
+            - prowlarr-config:/config
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
+
+
+    # ************************************************************************
+    # sonarr - TV show searching.
+    # 
+    #   Action: if you are not using this, then comment it out
+    # ************************************************************************
+    sonarr:
+        image: lscr.io/linuxserver/sonarr:latest
+        container_name: sonarr
+        restart: unless-stopped
+        environment:
+            - PUID=${PUID:-1000}
+            - PGID=${GUID:-1000}
+            - TZ=${TZ_ID}
+        volumes:
+            - sonarr-config:/config
+            - ${TV_VOLUME}:/tv
+            - ${DOWNLOADS_VOLUME}:/downloads
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
+            - prowlarr
+
+    # ************************************************************************
+    # sonarr - Movie searching.
+    # 
+    #   Action: if you are not using this, then comment it out
+    # ************************************************************************
+    radarr:
+        image: lscr.io/linuxserver/radarr:latest
+        container_name: radarr
+        restart: unless-stopped
+        environment:
+            - PUID=${PUID:-1000}
+            - PGID=${GUID:-1000}
+            - TZ=${TZ_ID}
+        volumes:
+            - radarr-config:/config
+            - ${MOVIE_VOLUME}:/movies
+            - ${DOWNLOADS_VOLUME}:/downloads
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
+            - prowlarr
+
+    # ************************************************************************
+    # readarr - Audiobook and eBook searching.  
+    #
+    #   Warning: Currently readarr has no active devs, and the servarr team 
+    #            would like someone to take over readarr development. It still
+    #            works, but not as well as it once did.
+    # 
+    #   Action: if you are not using this, then comment it out
+    # ************************************************************************
+    readarr:
+        # Readarr is currently releasing from their "develop" branch
+        image: lscr.io/linuxserver/readarr:develop
+        container_name: readarr
+        restart: unless-stopped
+        environment:
+            - PUID=${PUID:-1000}
+            - PGID=${GUID:-1000}
+            - TZ=${TZ_ID}
+        volumes:
+            - readarr-config:/config
+            - ${BOOKS_VOLUME}:/books
+            - ${DOWNLOADS_VOLUME}:/downloads
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
+            - prowlarr
+            
+
+
+    # ************************************************************************
     # qbittorrent
     #    qBittorrent is based on the Qt toolkit and libtorrent-rasterbar 
-    #    library.
-    # See https://docs.linuxserver.io/images/docker-qbittorrent/
+    #    library. 
+    #
+    #   See: https://docs.linuxserver.io/images/docker-qbittorrent/
+    #
+    #   Action: If you will ONLY be using a cloud based seedbox then you can
+    #           comment this out. However, local seedboxes can be nice for
+    #           occasional public tracker usage and can be configured separately
+    #           from other seedboxes in *arr apps
+    #
     # ************************************************************************
     qbittorrent:
         image: lscr.io/linuxserver/qbittorrent:latest
@@ -169,20 +199,24 @@ services:
             - WEBUI_PORT=${QBT_WEB_PORT:-8080}
         volumes:
             - qbittorrent-config:/config
-            - downloads:/downloads
+            - ${DOWNLOADS_VOLUME}:/downloads
         network_mode: "service:vpn"
         depends_on:
             - vpn
 
     # ************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
-    #
     #    Looks for a file named "port.dat", reads the port number in that
     #    file and uses that to update the Listening Port number used by
-    #    qBittorrent.
+    #    qBittorrent. The PIA image above is configured to drop the "port.dat"
+    #    file into the pia-portnumber volume.
     #
-    # See https://github.com/tyzen9/docker-qbittorrent-port-helper for
-    # configuration details
+    #   See: https://github.com/tyzen9/docker-qbittorrent-port-helper 
+    #
+    #   Action: If you are not using qBittorrent locally you can comment this
+    #           out. If you are not using PIA, then another VPN client will 
+    #           need to be configured to drop its port-forward number into a
+    #           "port.dat" in a shared volume this can use
     # ************************************************************************
     qbittorrent-port-helper:
         image: tyzen9/qbittorrent-port-helper:latest
@@ -201,12 +235,13 @@ services:
 
     # *******************************************************************
     # Stripparr  (Mike Nye)
+    #    Removes unwanted metadata from downloaded media, and is created 
+    #    and maintained by Mike Nye and other contributors
     #
-    #    is used to remove unwanted metadata from downloaded media, and
-    #    is created and maintained by Mike Nye and other contributors
+    #   See:  https://github.com/mikenye/docker-striparr
     #
-    # See https://github.com/mikenye/docker-striparr for details
-    # explaining how to configure it for use with Sonarr/Radarr
+    #   Action: You will need to configure Sonarr/Radarr to use Striparr:
+    #           https://github.com/mikenye/docker-striparr#sonarrradarr-configuration 
     # *******************************************************************
     striparr:
         image: mikenye/striparr:latest
@@ -227,10 +262,12 @@ services:
     #    DDoS-GUARD protection. Depending on the indexers you use, you 
     #    may need to configure this.  
     #
-    # Details are here: https://github.com/FlareSolverr/FlareSolverr
+    #   See: https://github.com/FlareSolverr/FlareSolverr
+    #
+    #   Action: Configure the indexers in Prowlarr as shown in this link:
+    #           https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/ 
     # *******************************************************************
     flaresolverr:
-        # DockerHub mirror flaresolverr/flaresolverr:latest
         image: ghcr.io/flaresolverr/flaresolverr:latest
         container_name: flaresolverr
         restart: always
@@ -243,16 +280,15 @@ services:
 
     # ************************************************************************
     # mam-ip-helper (Steve Theisen)
-    #
     #    This is a simple container that pings myanonamouse.net once an hour
     #    to update the VPN ipaddress being used for downloading. This is 
-    #    important to keep connectivity for seeding ratios etc.  If you do
-    #    not use myanonamouse.net, you can comment this service out, or just
-    #    neglect to provide a MAM_ID in the environment, and the container 
-    #    will simply exit
+    #    important to keep connectivity for seeding ratios etc.  
     #
-    # See https://github.com/tyzen9/docker-myanonamouse-ip-helper for
-    # configuration details
+    #  See: https://github.com/tyzen9/docker-myanonamouse-ip-helper
+    #
+    #  Action: If you do not use myanonamouse.net, you can comment this service
+    #          out, or just neglect to provide a MAM_ID in the environment, 
+    #          and the container will simply exit when it starts
     # ************************************************************************
     mam-ip-helper:
         image: tyzen9/myanonamouse-ip-helper:latest
@@ -267,9 +303,8 @@ services:
 volumes:
     pia-token:
     pia-portnumber:
-    qbittorrent-config:
     prowlarr-config:
     readarr-config:
     radarr-config:
     sonarr-config:
-    downloads:
+    qbittorrent-config:
