@@ -1,11 +1,16 @@
-name: servarr
+name: docker-servarr-seedbox
 
 services:
+    # +---------------------------------------------------------------------------+
+    # | WARNING: This config may lead to copyright issues. Use at your own risk!  |
+    # | Ensure compliance with copyright laws before proceeding.                  |
+    # +---------------------------------------------------------------------------+
+    
     # *****************************************************************************
     # docker-servarr-seedbox
     #
     # Author: Steve Theisen (steve@tyzen9.com)
-    #         www.tyzen9.com  -  https://www.github.com/tyzen9
+    #         https://www.github.com/tyzen9
     #
     # If there is a service below you do not plan to use, then simply comment its
     # it's section out by placing a '#' symbol before each line of the ENTIRE 
@@ -18,8 +23,8 @@ services:
     #          !! Use caution when making changes below the WARNING below !!
     #
     # *****************************************************************************
-
-    # ************************************************************************
+    
+    # *****************************************************************************
     # pia-vpn
     #    This AWESOME PIA wireguard VPN is created and maintained by thrnz
     #    For details on this container, and the available options be sure to 
@@ -34,7 +39,7 @@ services:
     #
     #   Action: This should be considered required, visit PIA to get started
     #           https://www.privateinternetaccess.com/buy-vpn-online
-    # ************************************************************************
+    # *****************************************************************************
     vpn:
         image: thrnz/docker-wireguard-pia:latest
         container_name: pia-vpn
@@ -76,7 +81,7 @@ services:
             timeout: 10s
             retries: 3
 
-    # ************************************************************************
+    # *****************************************************************************
     # prowlarr
     #    Prowlarr is an indexer manager and proxy that helps integrate various 
     #    PVR (Personal Video Recorder) applications by managing both Torrent 
@@ -86,7 +91,7 @@ services:
     #  Action: if you plan to use an *arr service, then you probably want
     #          Prowlarr so you can centralize all indexer configuration in
     #          one place.
-    # ************************************************************************
+    # *****************************************************************************
     prowlarr:
         image: lscr.io/linuxserver/prowlarr:latest
         container_name: prowlarr
@@ -102,11 +107,11 @@ services:
             - vpn
 
 
-    # ************************************************************************
+    # *****************************************************************************
     # sonarr - TV show searching.
     # 
     #   Action: if you are not using this, then comment it out
-    # ************************************************************************
+    # *****************************************************************************
     sonarr:
         image: lscr.io/linuxserver/sonarr:latest
         container_name: sonarr
@@ -124,11 +129,11 @@ services:
             - vpn
             - prowlarr
 
-    # ************************************************************************
+    # *****************************************************************************
     # sonarr - Movie searching.
     # 
     #   Action: if you are not using this, then comment it out
-    # ************************************************************************
+    # *****************************************************************************
     radarr:
         image: lscr.io/linuxserver/radarr:latest
         container_name: radarr
@@ -146,7 +151,7 @@ services:
             - vpn
             - prowlarr
 
-    # ************************************************************************
+    # *****************************************************************************
     # readarr - Audiobook and eBook searching.  
     #
     #   Warning: Currently readarr has no active devs, and the servarr team 
@@ -154,7 +159,7 @@ services:
     #            works, but not as well as it once did.
     # 
     #   Action: if you are not using this, then comment it out
-    # ************************************************************************
+    # *****************************************************************************
     readarr:
         # Readarr is currently releasing from their "develop" branch
         image: lscr.io/linuxserver/readarr:develop
@@ -175,7 +180,7 @@ services:
             
 
 
-    # ************************************************************************
+    # *****************************************************************************
     # qbittorrent
     #    qBittorrent is based on the Qt toolkit and libtorrent-rasterbar 
     #    library. 
@@ -187,7 +192,7 @@ services:
     #           occasional public tracker usage and can be configured separately
     #           from other seedboxes in *arr apps
     #
-    # ************************************************************************
+    # *****************************************************************************
     qbittorrent:
         image: lscr.io/linuxserver/qbittorrent:latest
         container_name: qbittorrent
@@ -204,7 +209,7 @@ services:
         depends_on:
             - vpn
 
-    # ************************************************************************
+    # *****************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
     #    Looks for a file named "port.dat", reads the port number in that
     #    file and uses that to update the Listening Port number used by
@@ -217,7 +222,7 @@ services:
     #           out. If you are not using PIA, then another VPN client will 
     #           need to be configured to drop its port-forward number into a
     #           "port.dat" in a shared volume this can use
-    # ************************************************************************
+    # *****************************************************************************
     qbittorrent-port-helper:
         image: tyzen9/qbittorrent-port-helper:latest
         container_name: qbittorrent-port-helper
@@ -278,7 +283,7 @@ services:
             - TZ=${TZ_ID}
         network_mode: "service:vpn"
 
-    # ************************************************************************
+    # *****************************************************************************
     # mam-ip-helper (Steve Theisen)
     #    This is a simple container that pings myanonamouse.net once an hour
     #    to update the VPN ipaddress being used for downloading. This is 
@@ -289,7 +294,7 @@ services:
     #  Action: If you do not use myanonamouse.net, you can comment this service
     #          out, or just neglect to provide a MAM_ID in the environment, 
     #          and the container will simply exit when it starts
-    # ************************************************************************
+    # *****************************************************************************
     mam-ip-helper:
         image: tyzen9/myanonamouse-ip-helper:latest
         container_name: mam-ip-helper
