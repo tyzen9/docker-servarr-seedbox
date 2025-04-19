@@ -97,15 +97,15 @@ services:
         container_name: prowlarr
         restart: always
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
         volumes:
             - prowlarr-config:/config
         network_mode: "service:vpn"
         depends_on:
-            - vpn
-
+            vpn:
+              condition: service_healthy
 
     # *****************************************************************************
     # sonarr - TV show searching.
@@ -117,9 +117,9 @@ services:
         container_name: sonarr
         restart: unless-stopped
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
         volumes:
             - sonarr-config:/config
             - ${TV_VOLUME}:/tv
@@ -139,9 +139,9 @@ services:
         container_name: radarr
         restart: unless-stopped
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
         volumes:
             - radarr-config:/config
             - ${MOVIE_VOLUME}:/movies
@@ -166,9 +166,9 @@ services:
         container_name: readarr
         restart: unless-stopped
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
         volumes:
             - readarr-config:/config
             - ${BOOKS_VOLUME}:/books
@@ -198,16 +198,17 @@ services:
         container_name: qbittorrent
         restart: always
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
             - WEBUI_PORT=${QBT_WEB_PORT:-8080}
         volumes:
             - qbittorrent-config:/config
             - ${DOWNLOADS_VOLUME}:/downloads
         network_mode: "service:vpn"
         depends_on:
-            - vpn
+            vpn:
+              condition: service_healthy
 
     # *****************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
@@ -228,12 +229,13 @@ services:
         container_name: qbittorrent-port-helper
         restart: always
         volumes:
-            - pia-portnumber:/pia-shared
+            - pia-portnumber:/vpn-data
         environment:
-            - QBITTORRENT_USERNAME=${QBT_USERNAME}
-            - QBITTORRENT_PASSWORD=${QBT_PASSWORD}
-            - QBITTORRENT_PORT_NUMBER=${QBT_WEB_PORT:-8080}
-            - QBITTORRENT_URL=http://localhost
+            - TZ=${TZ_ID}
+            - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+            - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+            - QBITTORRENT_PORT_NUMBER=${QBITTORRENT_PORT_NUMBER:-8080}
+            - QBITTORRENT_URL=${QBITTORRENT_URL}
         network_mode: "service:vpn"
         depends_on:
             - qbittorrent
@@ -253,9 +255,9 @@ services:
         container_name: striparr
         restart: always
         environment:
+            - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
             - PGID=${GUID:-1000}
-            - TZ=${TZ_ID}
         volumes:
             - ${MOVIE_VOLUME}:/movies
             - ${TV_VOLUME}:/tv
@@ -277,11 +279,39 @@ services:
         container_name: flaresolverr
         restart: always
         environment:
+            - TZ=${TZ_ID}
             - LOG_LEVEL=${LOG_LEVEL:-info}
             - LOG_HTML=${LOG_HTML:-false}
             - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-            - TZ=${TZ_ID}
         network_mode: "service:vpn"
+
+
+    # *****************************************************************************
+    # lftp-mirror (Steve Theisen)
+    #    This is container is used to pull downloaded files from a remote seedbox
+    #    using lftp.  This will mirror the content between the two directories.
+    #
+    #  See: https://github.com/tyzen9/docker-lftp-mirror
+    #
+    #  Action: If you do not use a remote seedbox, you can comment this service out
+    # *****************************************************************************
+    lftp-mirror:
+        image: tyzen9/lftp-mirror:latest
+        container_name: lftp-mirror
+        environment:
+            - TZ_ID=${TZ_ID}
+            - SOURCE_HOSTNAME=${SOURCE_HOSTNAME}
+            - SSH_USERNAME=${SSH_USERNAME}
+            - SSH_PASSWORD=${SSH_PASSWORD}
+            - SOURCE_DIR=${SOURCE_DIR}
+            - SOURCE_EXCLUDES=${SOURCE_EXCLUDES}
+        volumes:
+            - ${DOWNLOADS_VOLUME}:/downloads
+        network_mode: "service:vpn"
+        depends_on:
+            vpn:
+              condition: service_healthy
+
 
     # *****************************************************************************
     # mam-ip-helper (Steve Theisen)
@@ -295,14 +325,14 @@ services:
     #          out, or just neglect to provide a MAM_ID in the environment, 
     #          and the container will simply exit when it starts
     # *****************************************************************************
-    mam-ip-helper:
-        image: tyzen9/myanonamouse-ip-helper:latest
-        container_name: mam-ip-helper
-        environment:
-            - MAM_ID=${MAM_ID}
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
+    # mam-ip-helper:
+    #     image: tyzen9/myanonamouse-ip-helper:latest
+    #     container_name: mam-ip-helper
+    #     environment:
+    #         - MAM_ID=${MAM_ID}
+    #     network_mode: "service:vpn"
+    #     depends_on:
+    #         - vpn
     
 
 volumes:
