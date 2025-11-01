@@ -105,7 +105,7 @@ services:
         network_mode: "service:vpn"
         depends_on:
             vpn:
-              condition: service_healthy
+                condition: service_healthy
 
     # *****************************************************************************
     # sonarr - TV show searching.
@@ -151,32 +151,32 @@ services:
             - vpn
             - prowlarr
 
-    # *****************************************************************************
-    # readarr - Audiobook and eBook searching.  
-    #
-    #   Warning: Currently readarr has no active devs, and the servarr team 
-    #            would like someone to take over readarr development. It still
-    #            works, but not as well as it once did.
-    # 
-    #   Action: if you are not using this, then comment it out
-    # *****************************************************************************
-    readarr:
-        # Readarr is currently releasing from their "develop" branch
-        image: lscr.io/linuxserver/readarr:develop
-        container_name: readarr
-        restart: unless-stopped
-        environment:
-            - TZ=${TZ_ID}
-            - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
-        volumes:
-            - readarr-config:/config
-            - ${BOOKS_VOLUME}:/books
-            - ${DOWNLOADS_VOLUME}:/downloads
-        network_mode: "service:vpn"
-        depends_on:
-            - vpn
-            - prowlarr
+    # # *****************************************************************************
+    # # readarr - Audiobook and eBook searching.  
+    # #
+    # #   Warning: Currently readarr has no active devs, and the servarr team 
+    # #            would like someone to take over readarr development. It still
+    # #            works, but not as well as it once did.
+    # # 
+    # #   Action: if you are not using this, then comment it out
+    # # *****************************************************************************
+    # readarr:
+    #     # Readarr is currently releasing from their "develop" branch
+    #     image: lscr.io/linuxserver/readarr:develop
+    #     container_name: readarr
+    #     restart: unless-stopped
+    #     environment:
+    #         - TZ=${TZ_ID}
+    #         - PUID=${PUID:-1000}
+    #         - PGID=${GUID:-1000}
+    #     volumes:
+    #         - readarr-config:/config
+    #         - ${BOOKS_VOLUME}:/books
+    #         - ${DOWNLOADS_VOLUME}:/downloads
+    #     network_mode: "service:vpn"
+    #     depends_on:
+    #         - vpn
+    #         - prowlarr
             
 
 
@@ -208,7 +208,7 @@ services:
         network_mode: "service:vpn"
         depends_on:
             vpn:
-              condition: service_healthy
+                condition: service_healthy
 
     # *****************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
@@ -283,6 +283,8 @@ services:
             - LOG_LEVEL=${LOG_LEVEL:-info}
             - LOG_HTML=${LOG_HTML:-false}
             - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+        volumes:
+            - flaresolverr-config:/config
         network_mode: "service:vpn"
 
 
@@ -310,7 +312,7 @@ services:
         network_mode: "service:vpn"
         depends_on:
             vpn:
-              condition: service_healthy
+                condition: service_healthy
 
 
     # *****************************************************************************
@@ -336,10 +338,11 @@ services:
     
 
 volumes:
+    flaresolverr-config:
     pia-token:
     pia-portnumber:
     prowlarr-config:
+    qbittorrent-config:
     readarr-config:
     radarr-config:
     sonarr-config:
-    qbittorrent-config:
