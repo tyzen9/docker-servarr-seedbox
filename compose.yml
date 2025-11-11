@@ -287,6 +287,36 @@ services:
             - flaresolverr-config:/config
         network_mode: "service:vpn"
 
+    # *******************************************************************
+    # unpackerr
+    #     Unpackerr monitors and extracts downloaded archives for 
+    #     applications like Sonarr, Radarr, Lidarr, etc.
+    #     It helps automate post-processing by unzipping files into 
+    #     your media library after downloads complete.
+    #
+    #     See: https://github.com/Unpackerr/unpackerr
+    #
+    #     Action: Configure each app connection (Sonarr, Radarr, etc.)
+    #             in the Unpackerr settings to match your download and
+    #             media directory paths.
+    # *******************************************************************
+    unpackerr:
+        image: golift/unpackerr
+        container_name: unpackerr
+        restart: always
+        user: ${PUID:-1000}:${GUID:-1000}
+        environment:
+            - TZ=${TZ_ID}
+            - LOG_LEVEL=${LOG_LEVEL:-info}
+            - UN_LOG_FILE=/downloads/logs/unpackerr.log
+            - UN_SONARR_0_URL=${SONARR_URL:-http://localhost}:${SONARR_WEB_PORT:-8989}
+            - UN_SONARR_0_API_KEY=${SONARR_API_KEY}
+            - UN_RADARR_0_URL=${RADARR_URL:-http://localhost}:${RADARR_WEB_PORT:-7878}
+            - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
+        network_mode: "service:vpn"
+        volumes:
+            - ${DOWNLOADS_VOLUME}:/downloads
+
 
     # *****************************************************************************
     # lftp-mirror (Steve Theisen)
