@@ -99,7 +99,7 @@ services:
         environment:
             - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
+            - PGID=${PGID:-1000}
         volumes:
             - prowlarr-config:/config
         network_mode: "service:vpn"
@@ -119,7 +119,7 @@ services:
         environment:
             - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
+            - PGID=${PGID:-1000}
         volumes:
             - sonarr-config:/config
             - ${TV_VOLUME}:/tv
@@ -141,7 +141,7 @@ services:
         environment:
             - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
+            - PGID=${PGID:-1000}
         volumes:
             - radarr-config:/config
             - ${MOVIE_VOLUME}:/movies
@@ -168,7 +168,7 @@ services:
     #     environment:
     #         - TZ=${TZ_ID}
     #         - PUID=${PUID:-1000}
-    #         - PGID=${GUID:-1000}
+    #         - PGID=${PGID:-1000}
     #     volumes:
     #         - readarr-config:/config
     #         - ${BOOKS_VOLUME}:/books
@@ -200,7 +200,7 @@ services:
         environment:
             - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
+            - PGID=${PGID:-1000}
             - WEBUI_PORT=${QBT_WEB_PORT:-8080}
         volumes:
             - qbittorrent-config:/config
@@ -257,7 +257,7 @@ services:
         environment:
             - TZ=${TZ_ID}
             - PUID=${PUID:-1000}
-            - PGID=${GUID:-1000}
+            - PGID=${PGID:-1000}
         volumes:
             - ${MOVIE_VOLUME}:/movies
             - ${TV_VOLUME}:/tv
@@ -304,7 +304,7 @@ services:
         image: golift/unpackerr
         container_name: unpackerr
         restart: always
-        user: ${PUID:-1000}:${GUID:-1000}
+        user: ${PUID:-1000}:${PGID:-1000}
         environment:
             - TZ=${TZ_ID}
             - LOG_LEVEL=${LOG_LEVEL:-info}
@@ -316,6 +316,13 @@ services:
         network_mode: "service:vpn"
         volumes:
             - ${DOWNLOADS_VOLUME}:/downloads
+        depends_on:
+            vpn:
+                condition: service_healthy
+            sonarr:
+                condition: service_started
+            radarr:
+                condition: service_started
 
 
     # *****************************************************************************
@@ -330,6 +337,8 @@ services:
     lftp-mirror:
         image: tyzen9/lftp-mirror:latest
         container_name: lftp-mirror
+        restart: always
+        user: ${PUID:-1000}:${PGID:-1000}
         environment:
             - TZ_ID=${TZ_ID}
             - SOURCE_HOSTNAME=${SOURCE_HOSTNAME}
@@ -360,6 +369,8 @@ services:
     mam-ip-helper:
         image: tyzen9/myanonamouse-ip-helper:latest
         container_name: mam-ip-helper
+        restart: always
+        user: ${PUID:-1000}:${PGID:-1000}
         environment:
             - MAM_ID=${MAM_ID}
         network_mode: "service:vpn"
