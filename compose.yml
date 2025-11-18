@@ -41,7 +41,7 @@ services:
     #           https://www.privateinternetaccess.com/buy-vpn-online
     # *****************************************************************************
     vpn:
-        image: thrnz/docker-wireguard-pia:latest
+        image: thrnz/docker-wireguard-pia:${TAG_PIA:-latest}
         container_name: pia-vpn
         restart: always
         volumes:
@@ -80,6 +80,11 @@ services:
             interval: 30s
             timeout: 10s
             retries: 3
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            - 'wud.tag.include=latest'
+            - 'wud.watch.digest=true'           
+            - 'wud.link.template=https://hub.docker.com/r/thrnz/docker-wireguard-pia' 
 
     # *****************************************************************************
     # prowlarr
@@ -93,7 +98,7 @@ services:
     #          one place.
     # *****************************************************************************
     prowlarr:
-        image: lscr.io/linuxserver/prowlarr:latest
+        image: linuxserver/prowlarr:${TAG_PROWLARR:-latest}
         container_name: prowlarr
         restart: always
         environment:
@@ -106,6 +111,10 @@ services:
         depends_on:
             vpn:
                 condition: service_healthy
+        labels:
+        # What's up docker labels (https://getwud.github.io/wud/#/)
+        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+        - 'wud.link.template=https://github.com/Prowlarr/Prowlarr/releases'
 
     # *****************************************************************************
     # sonarr - TV show searching.
@@ -113,7 +122,7 @@ services:
     #   Action: if you are not using this, then comment it out
     # *****************************************************************************
     sonarr:
-        image: lscr.io/linuxserver/sonarr:latest
+        image: linuxserver/sonarr:${TAG_SONARR:-latest}
         container_name: sonarr
         restart: unless-stopped
         environment:
@@ -128,6 +137,10 @@ services:
         depends_on:
             - vpn
             - prowlarr
+        labels:
+        # What's up docker labels (https://getwud.github.io/wud/#/)
+        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+        - 'wud.link.template=https://github.com/Sonarr/Sonarr/releases'
 
     # *****************************************************************************
     # sonarr - Movie searching.
@@ -135,7 +148,7 @@ services:
     #   Action: if you are not using this, then comment it out
     # *****************************************************************************
     radarr:
-        image: lscr.io/linuxserver/radarr:latest
+        image: linuxserver/radarr:${TAG_RADARR:-latest}
         container_name: radarr
         restart: unless-stopped
         environment:
@@ -150,6 +163,10 @@ services:
         depends_on:
             - vpn
             - prowlarr
+        labels:
+        # What's up docker labels (https://getwud.github.io/wud/#/)
+        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+        - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
 
     # # *****************************************************************************
     # # readarr - Audiobook and eBook searching.  
@@ -162,7 +179,7 @@ services:
     # # *****************************************************************************
     # readarr:
     #     # Readarr is currently releasing from their "develop" branch
-    #     image: lscr.io/linuxserver/readarr:develop
+    #     image: lscr.io/linuxserver/readarr:${TAG_READARR:-latest}
     #     container_name: readarr
     #     restart: unless-stopped
     #     environment:
@@ -194,7 +211,7 @@ services:
     #
     # *****************************************************************************
     qbittorrent:
-        image: lscr.io/linuxserver/qbittorrent:latest
+        image: linuxserver/qbittorrent:${TAG_QBT:-latest}
         container_name: qbittorrent
         restart: always
         environment:
@@ -209,6 +226,11 @@ services:
         depends_on:
             vpn:
                 condition: service_healthy
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # Match a single digit first
+            - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'
+            - 'wud.link.template=https://www.qbittorrent.org/news'
 
     # *****************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
@@ -225,7 +247,7 @@ services:
     #           "port.dat" in a shared volume this can use
     # *****************************************************************************
     qbittorrent-port-helper:
-        image: tyzen9/qbittorrent-port-helper:latest
+        image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
         container_name: qbittorrent-port-helper
         restart: always
         volumes:
@@ -239,6 +261,10 @@ services:
         network_mode: "service:vpn"
         depends_on:
             - qbittorrent
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
 
     # *******************************************************************
     # Stripparr  (Mike Nye)
@@ -251,7 +277,7 @@ services:
     #           https://github.com/mikenye/docker-striparr#sonarrradarr-configuration 
     # *******************************************************************
     striparr:
-        image: mikenye/striparr:latest
+        image: mikenye/striparr:${TAG_STRIPARR:-latest}
         container_name: striparr
         restart: always
         environment:
@@ -262,6 +288,11 @@ services:
             - ${MOVIE_VOLUME}:/movies
             - ${TV_VOLUME}:/tv
         network_mode: "service:vpn"
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            - 'wud.tag.include=latest'
+            - 'wud.watch.digest=true'           
+            - 'wud.link.template=https://github.com/mikenye/docker-striparr/releases' 
 
     # *******************************************************************
     # flaresolverr 
@@ -275,7 +306,7 @@ services:
     #           https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/ 
     # *******************************************************************
     flaresolverr:
-        image: ghcr.io/flaresolverr/flaresolverr:latest
+        image: flaresolverr/flaresolverr:${TAG_FLARESOLVER:-latest}
         container_name: flaresolverr
         restart: always
         environment:
@@ -286,6 +317,11 @@ services:
         volumes:
             - flaresolverr-config:/config
         network_mode: "service:vpn"
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # Support leading 'V'
+            - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/FlareSolverr/FlareSolverr/releases'            
 
     # *******************************************************************
     # unpackerr
@@ -301,7 +337,7 @@ services:
     #             media directory paths.
     # *******************************************************************
     unpackerr:
-        image: golift/unpackerr
+        image: golift/unpackerr:${TAG_UNPACKERR:-latest}
         container_name: unpackerr
         restart: always
         user: ${PUID:-1000}:${PGID:-1000}
@@ -323,6 +359,11 @@ services:
                 condition: service_started
             radarr:
                 condition: service_started
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # Support leading 'V'
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Unpackerr/unpackerr/releases'            
 
 
     # *****************************************************************************
@@ -335,7 +376,7 @@ services:
     #  Action: If you do not use a remote seedbox, you can comment this service out
     # *****************************************************************************
     lftp-mirror:
-        image: tyzen9/lftp-mirror:latest
+        image: tyzen9/lftp-mirror:${TAG_LFTP_MIRROR:-latest}
         container_name: lftp-mirror
         restart: always
         user: ${PUID:-1000}:${PGID:-1000}
@@ -352,7 +393,11 @@ services:
         depends_on:
             vpn:
                 condition: service_healthy
-
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # Support leading 'V'
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/tyzen9/docker-lftp-mirror/releases'  
 
     # *****************************************************************************
     # mam-ip-helper (Steve Theisen)
@@ -367,7 +412,7 @@ services:
     #          and the container will simply exit when it starts
     # *****************************************************************************
     mam-ip-helper:
-        image: tyzen9/myanonamouse-ip-helper:latest
+        image: tyzen9/myanonamouse-ip-helper:${TAG_MAM_HELPER:-latest}
         container_name: mam-ip-helper
         restart: always
         user: ${PUID:-1000}:${PGID:-1000}
@@ -376,6 +421,11 @@ services:
         network_mode: "service:vpn"
         depends_on:
             - vpn
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # Support leading 'V'
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/tyzen9/docker-myanonamouse-ip-helper/releases'  
     
 
 volumes:
