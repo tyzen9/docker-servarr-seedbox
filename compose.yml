@@ -379,9 +379,10 @@ services:
         image: tyzen9/lftp-mirror:${TAG_LFTP_MIRROR:-latest}
         container_name: lftp-mirror
         restart: always
-        user: ${PUID:-1000}:${PGID:-1000}
         environment:
             - TZ_ID=${TZ_ID}
+            - PUID=${PUID:-1000}
+            - PGID=${PGID:-1000}            
             - SOURCE_HOSTNAME=${SOURCE_HOSTNAME}
             - SSH_USERNAME=${SSH_USERNAME}
             - SSH_PASSWORD=${SSH_PASSWORD}
