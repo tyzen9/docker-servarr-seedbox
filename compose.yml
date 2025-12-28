@@ -250,6 +250,7 @@ services:
         image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
         container_name: qbittorrent-port-helper
         restart: always
+        init: true
         volumes:
             - pia-portnumber:/vpn-data
         environment:
@@ -379,6 +380,7 @@ services:
         image: tyzen9/lftp-mirror:${TAG_LFTP_MIRROR:-latest}
         container_name: lftp-mirror
         restart: always
+        init: true
         environment:
             - TZ_ID=${TZ_ID}
             - PUID=${PUID:-1000}
@@ -416,6 +418,7 @@ services:
         image: tyzen9/myanonamouse-ip-helper:${TAG_MAM_HELPER:-latest}
         container_name: mam-ip-helper
         restart: always
+        init: true
         user: ${PUID:-1000}:${PGID:-1000}
         environment:
             - MAM_ID=${MAM_ID}
