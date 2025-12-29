@@ -38,7 +38,7 @@ The docker-pia-servarr stack contains everything you need for a stable Servarr e
 1. [Flaresolver](https://github.com/FlareSolverr/FlareSolverr) - an open-source proxy server designed to bypass Cloudflare's anti-bot protections, enabling seamless web scraping from Cloudflare-protected websites
 1. [Unpackerr](https://github.com/Unpackerr/unpackerr) - prevents rar files getting stuck in the activity queue.
 1. [Bazarr](https://www.bazarr.media/) - a companion application to Sonarr and Radarr that manages and downloads subtitles based on your requirements.
-1. [Recyclarr](https://recyclarr.dev/) - Automatically synchronize TRaSH Guides to Sonarr and Radarr
+1. [Recyclarr](https://recyclarr.dev/) - Automatically synchronize [TRaSH Guides](https://trash-guides.info/) to Sonarr and Radarr
 1. [lftp-mirror](https://github.com/tyzen9/docker-lftp-mirror) - a container for mirroring the contents of a source server to a target server using an ssh tunnel and lftp to perform efficient file transfers through a secure connection.
 1. [Myanonamouse (MAM) Dynamic Ip Helper](https://github.com/tyzen9/docker-myanonamouse-ip-helper) - scripting to keep a dynamic [myanonamouse](https://www.myanonamouse.net/) dynamic seedbox IP up to date.
 
