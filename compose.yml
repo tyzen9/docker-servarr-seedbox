@@ -72,7 +72,8 @@ services:
             - ${SONARR_WEB_PORT:-8989}:8989
             - ${RADARR_WEB_PORT:-7878}:7878
             - ${READARR_WEB_PORT:-8787}:8787
-            - "${FLARESOLVER_WEB_PORT:-8191}:8191"
+            - ${FLARESOLVER_WEB_PORT:-8191}:8191
+            - ${BAZARR_WEB_PORT:-6767}:6767
 
         # The container has no recovery logic. Use a healthcheck to catch disconnects.
         healthcheck:
@@ -164,9 +165,52 @@ services:
             - vpn
             - prowlarr
         labels:
-        # What's up docker labels (https://getwud.github.io/wud/#/)
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+
+    # *****************************************************************************
+    # bazarr - Movie subtitles.
+    # 
+    #   Action: if you are not using this, then comment it out
+    # *****************************************************************************
+    bazarr:
+        image: linuxserver/bazarr:${TAG_BAZARR:-latest}
+        container_name: bazarr
+        restart: unless-stopped
+        environment:
+            - TZ=${TZ_ID}
+            - PUID=${PUID:-1000}
+            - PGID=${PGID:-1000}
+        volumes:
+            - bazarr-config:/config
+            - ${MOVIE_VOLUME}:/movies
+            - ${TV_VOLUME}:/tv
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
+        labels:
+            # What's up docker labels (https://getwud.github.io/wud/#/)
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+
+    # *****************************************************************************
+    # recyclarr - Automatically sync TRaSH guides to your Sonarr and Radarr instances.
+    # 
+    #   Action: if you are not using this, then comment it out
+    # *****************************************************************************
+    recyclarr:
+        image: ghcr.io/recyclarr/recyclarr
+        container_name: recyclarr
+        restart: unless-stopped
+        environment:
+            - TZ=${TZ_ID}
+        user: ${PUID:-1000}:${PGID:-1000}
+        volumes:
+            - recyclarr-config:/config
+        network_mode: "service:vpn"
+        depends_on:
+            - vpn
 
     # # *****************************************************************************
     # # readarr - Audiobook and eBook searching.  
@@ -439,5 +483,7 @@ volumes:
     prowlarr-config:
     qbittorrent-config:
     readarr-config:
+    recyclarr-config:
     radarr-config:
+    bazarr-config:
     sonarr-config:
