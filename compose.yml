@@ -205,6 +205,7 @@ services:
         restart: unless-stopped
         environment:
             - TZ=${TZ_ID}
+            - CRON_SCHEDULE=0 4 * * *   # Runs daily at 4:00 AM (change time as needed, e.g., 30 3 for 3:30 AM)
         user: ${PUID:-1000}:${PGID:-1000}
         volumes:
             - recyclarr-config:/config
