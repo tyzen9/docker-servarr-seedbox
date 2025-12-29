@@ -25,11 +25,10 @@ This PIA and Servarr stack offers the following services:
 The docker-pia-servarr stack contains everything you need for a stable Servarr experience. To get started experimenting with this technology all you is a Linux host, some curiosity, and an affordable [Private Internet Access](https://www.privateinternetaccess.com/) (PIA) VPN account. The [PIA Servarr Wiki](https://github.com/tyzen9/docker-pia-servarr/wiki) should get even the least experienced Ubuntu Linux user off the ground and running.
 
 
+> [!IMPORTANT]
+> In the case where the VPN container becomes non-functional, all the following activity will stop.
 
 1. [PIA VPN](https://github.com/thrnz/docker-wireguard-pia) - A PIA VPN tunnel is created for ALL activity on this Docker Stack.  
-   > [!IMPORTANT]
-   > In the case where the VPN container becomes non-functional, all the following activity will stop.
-
 1. [Prowlarr](https://prowlarr.com/) - an indexer manager/proxy built on the popular *arr .net/reactjs base stack, designed to integrate with various PVR applications like Sonarr, Radarr, Lidarr, and Readarr. It supports the management of both Torrent Trackers and Usenet Indexers, streamlining the process of adding and maintaining indexers across multiple media management applications.
 1. [Sonarr](https://sonarr.tv/) - a personal video recorder (PVR) for TV shows, designed for both Usenet and BitTorrent users, which automatically searches for new episodes of your favorite series, downloads them, and organizes your media library. It monitors RSS feeds, manages inventory, renames files, and can upgrade the quality of your media collection by replacing lower-quality episodes with higher-quality versions when available.
 1. [Radarr](https://radarr.video/) - an open-source application designed for automating movie downloads, similar to how Sonarr handles TV shows. It monitors multiple RSS feeds for new movie releases, integrates with Usenet or BitTorrent clients to download, sort, and rename movies, and can automatically upgrade existing movie files to higher quality versions when available.
