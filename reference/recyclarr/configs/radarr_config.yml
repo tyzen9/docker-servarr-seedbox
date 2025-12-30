@@ -1,7 +1,7 @@
 radarr:
   tyzen9-radarr:
-    base_url: http://127.0.0.1:7878
-    api_key: b10d083c12644d079235947483952391
+    base_url: http://hostname:7878
+    api_key: << YOUR API KEY >>
 
     # Quality Definitions: https://recyclarr.dev/reference/configuration/quality-definition/
     quality_definition:

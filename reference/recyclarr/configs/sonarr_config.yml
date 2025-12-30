@@ -1,7 +1,7 @@
 sonarr:
   tyzen9-sonarr:
-    base_url: http://127.0.0.1:8989
-    api_key: fbfe0d61eee349be86991afc3bf8bb8e
+    base_url: http://hostname:8989
+    api_key: << YOUR API KEY >>
 
     # Quality Definitions: https://recyclarr.dev/reference/configuration/quality-definition/
     quality_definition:
