@@ -1,0 +1,118 @@
+sonarr:
+  tyzen9-sonarr:
+    base_url: http://127.0.0.1:8989
+    api_key: fbfe0d61eee349be86991afc3bf8bb8e
+
+    # Quality Definitions: https://recyclarr.dev/reference/configuration/quality-definition/
+    quality_definition:
+      type: series
+      preferred_ratio: 0.5
+      qualities:
+        # Max and preferred values in Radarr's quality definitions represent MB per minute
+        # of runtime limits, not total file size. Radarr multiplies these by estimated movie
+        # length to calculate actual rejection/grab thresholds
+        #
+        # Actual File Size Limit = (max/preferred value) × runtime_minutes
+        #     We will assume a 60min (1h) movie for these calculations
+        - name: WEBDL-1080p
+          max: 100              # 100 MB/min x 60min (1h show) = 6GB
+          min: 12.5             # 750MB (TRaSH DEFAULT: 12.5)
+          preferred: 50         # 3GB
+        - name: WEBRip-1080p
+          max: 100              # 6GB
+          min: 12.5             # 750MB (TRaSH DEFAULT: 12.5)
+          preferred: 50         # 3GB
+        - name: WEBDL-720p
+          max: 80               # 4.8GB
+          min: 8                # 480MB (TRaSH DEFAULT: 8)
+          preferred: 20         # 1.2GB
+        - name: WEBRip-720p
+          max: 80               # 4.8GB
+          min: 8                # 480MB (TRaSH DEFAULT: 8)
+          preferred: 20         # 1.2GB
+
+    quality_profiles:
+      # ------------------------------------------------------------------------
+      - name: HD 1080p                   # Exact name that will appear in Sonarr
+        upgrade:
+          allowed: true                  # Enable upgrades
+          until_quality: WEB 1080p       # Stop upgrading once this is reached
+          until_score: 10000             # Upgrade Until Custom Format Score
+        min_format_score: 0              # Minimum Custom Format Score
+        min_upgrade_format_score: 1      # Minimum Custom Format Score Increment
+        qualities:
+          - name: WEB 1080p
+            qualities:
+              - WEBDL-1080p
+              - WEBRip-1080p
+          - name: WEB 720P
+            qualities:
+              - WEBRip-720p
+              - WEBDL-720p
+      # ------------------------------------------------------------------------
+      - name: HD 720p                    # Exact name that will appear in Sonarr
+        upgrade:
+          allowed: true                  # Enable upgrades
+          until_quality: WEB 720p        # Stop upgrading once this is reached
+          until_score: 10000             # Upgrade Until Custom Format Score
+        min_format_score: 0              # Minimum Custom Format Score
+        min_upgrade_format_score: 1      # Minimum Custom Format Score Increment
+        qualities:
+          - name: WEB 720P
+            qualities:
+              - WEBRip-720p
+              - WEBDL-720p
+          # We will accept 1080p for this profile, but dont need it in the end so
+          # keep looking for 720p content to preserve disk space
+          - name: WEB 1080p
+            qualities:
+              - WEBDL-1080p
+              - WEBRip-1080p
+
+    delete_old_custom_formats: true
+    replace_existing_custom_formats: true
+    custom_formats:
+      - trash_ids:
+          # ----------------------------------------------------------------------
+          # This list comes from the command: recyclarr list custom-formats sonarr
+          # ----------------------------------------------------------------------
+          # HQ Source Groups
+          - d0c516558625b04b363fa6c5c2c7cfd4 # WEB Scene
+          - e6258996055b9fbab7e9cb2f75819294 # WEB Tier 01
+          - 58790d4e2fdcd9733aa7ae68ba2bb503 # WEB Tier 02
+          - d84935abd3f8556dcd51d4f27e22d0a6 # WEB Tier 03
+          # General Streaming Services
+          - d660701077794679fd59e8bdf4ce3a29 # AMZN
+          - d9e511921c8cedc7282e291b0209cdc5 # ATV
+          - f67c9ca88f463a48346062e8ad07713f # ATVP
+          - 77a7b25585c18af08f60b1547bb9b4fb # CC
+          - 36b72f59f4ea20aad9316f475f2d9fbb # DCU
+          - 89358767a60cc28783cdc3d0be9388a4 # DSNP
+          - 7a235133c87f7da4c8cccceca7e3c7a6 # HBO
+          - a880d6abc21e7c16884f3ae393f84179 # HMAX
+          - f6cce30f1733d5c8194222a7507909bb # HULU
+          - 81d1fbf600e2540cee87f3a23f9d3c1c # MAX
+          - d34870697c9db575f17700212167be23 # NF
+          - 1656adc6d7bb2c8cca6acfb6592db421 # PCOK
+          - 6eb71887a8db6e783dd398446eb0e65d # PLAY
+          - c67a75ae4a1715f2bb4d492755ba4195 # PMTP
+          - da393fd4e2c0cce7c9dc2669c43e0593 # ROKU
+          - ae58039e1319178e6be73caab5c42166 # SHO
+          - 1efe8da11bfd74fbbcd4d8117ddb9213 # STAN
+          - 9623c5c9cac8e939c1b9aedd32f640bf # SYFY
+          - 0ac24a2a68a9700bcb7eeca8e5cd644c # iT
+          # Miscellaneous
+          - eb3d5cc0a2be0db205fb823640db6a3c # Repack v2
+          - 44e7c4de10ae50265753082e5dc76047 # Repack v3
+          - ec8fa7296b64e8cd390a1600981f3923 # Repack/Proper
+          # Unwanted
+          - 15a05bc7c1a36e2b57fd628f8977e2fc # AV1
+          - 85c61753df5da1fb2aab6f2a47426b09 # BR-DISK
+          - fbcb31d8dabd2a319072b84fc0b7249c # Extras
+          - 9c11cd3f07101cdba90a2d81cf0e56b4 # LQ
+          - e2315f990da2e2cbfc9fa5b7a6fcfe48 # LQ (Release Title)
+          - 23297a736ca77c0fc8e70f8edd7ee56c # Upscaled
+          - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
+        assign_scores_to:
+          - name: HD 1080p   # Your exact custom profile name
+          - name: HD 720p    # Your exact custom profile name
