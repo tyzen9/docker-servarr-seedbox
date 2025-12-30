@@ -9,7 +9,6 @@
 <img src="docs/images/sonarr-logo.png" height="50">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 <img src="docs/images/bazarr-logo.png" height="50">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 <img src="docs/images/recyclarr-logo.png" height="50">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-<img src="docs/images/readarr-logo.png" height="50">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 </p>  
 
 > [!IMPORTANT]
