@@ -1,2 +1,2 @@
 .env*
-compose.local
+compose.local.yaml
