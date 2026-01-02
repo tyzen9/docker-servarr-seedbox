@@ -1,11 +1,9 @@
-name: docker-servarr-seedbox
-
 services:
     # +---------------------------------------------------------------------------+
     # | WARNING: This config may lead to copyright issues. Use at your own risk!  |
     # | Ensure compliance with copyright laws before proceeding.                  |
     # +---------------------------------------------------------------------------+
-    
+
     # *****************************************************************************
     # docker-servarr-seedbox
     #
@@ -82,7 +80,7 @@ services:
             timeout: 10s
             retries: 3
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=latest'
             - 'wud.watch.digest=true'           
             - 'wud.link.template=https://hub.docker.com/r/thrnz/docker-wireguard-pia' 
@@ -113,9 +111,11 @@ services:
             vpn:
                 condition: service_healthy
         labels:
-        # What's up docker labels (https://getwud.github.io/wud/#/)
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Prowlarr/Prowlarr/releases'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Prowlarr/Prowlarr/releases'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
     # *****************************************************************************
     # sonarr - TV show searching.
@@ -139,12 +139,14 @@ services:
             - vpn
             - prowlarr
         labels:
-        # What's up docker labels (https://getwud.github.io/wud/#/)
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Sonarr/Sonarr/releases'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Sonarr/Sonarr/releases'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
     # *****************************************************************************
-    # sonarr - Movie searching.
+    # radarr - Movie searching.
     # 
     #   Action: if you are not using this, then comment it out
     # *****************************************************************************
@@ -165,9 +167,11 @@ services:
             - vpn
             - prowlarr
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
     # *****************************************************************************
     # bazarr - Movie subtitles.
@@ -190,9 +194,11 @@ services:
         depends_on:
             - vpn
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
     # *****************************************************************************
     # recyclarr - Automatically sync TRaSH guides to your Sonarr and Radarr instances.
@@ -200,7 +206,7 @@ services:
     #   Action: if you are not using this, then comment it out
     # *****************************************************************************
     recyclarr:
-        image: ghcr.io/recyclarr/recyclarr
+        image: ghcr.io/recyclarr/recyclarr:${TAG_RECYCLARR:-latest}
         container_name: recyclarr
         restart: unless-stopped
         environment:
@@ -212,35 +218,13 @@ services:
         network_mode: "service:vpn"
         depends_on:
             - vpn
-
-    # # *****************************************************************************
-    # # readarr - Audiobook and eBook searching.  
-    # #
-    # #   Warning: Currently readarr has no active devs, and the servarr team 
-    # #            would like someone to take over readarr development. It still
-    # #            works, but not as well as it once did.
-    # # 
-    # #   Action: if you are not using this, then comment it out
-    # # *****************************************************************************
-    # readarr:
-    #     # Readarr is currently releasing from their "develop" branch
-    #     image: lscr.io/linuxserver/readarr:${TAG_READARR:-latest}
-    #     container_name: readarr
-    #     restart: unless-stopped
-    #     environment:
-    #         - TZ=${TZ_ID}
-    #         - PUID=${PUID:-1000}
-    #         - PGID=${PGID:-1000}
-    #     volumes:
-    #         - readarr-config:/config
-    #         - ${BOOKS_VOLUME}:/books
-    #         - ${DOWNLOADS_VOLUME}:/downloads
-    #     network_mode: "service:vpn"
-    #     depends_on:
-    #         - vpn
-    #         - prowlarr
+        labels:
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+            - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
             
-
 
     # *****************************************************************************
     # qbittorrent
@@ -272,10 +256,11 @@ services:
             vpn:
                 condition: service_healthy
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
-            # Match a single digit first
-            - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+            - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'  # Match a single digit first
             - 'wud.link.template=https://www.qbittorrent.org/news'
+            # Offen Backup Labels -------------------------------------------------
+            - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
     # *****************************************************************************
     # qbittorrent-port-helper (Steve Theisen)
@@ -308,7 +293,7 @@ services:
         depends_on:
             - qbittorrent
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
 
@@ -335,7 +320,7 @@ services:
             - ${TV_VOLUME}:/tv
         network_mode: "service:vpn"
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=latest'
             - 'wud.watch.digest=true'           
             - 'wud.link.template=https://github.com/mikenye/docker-striparr/releases' 
@@ -364,9 +349,8 @@ services:
             - flaresolverr-config:/config
         network_mode: "service:vpn"
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
-            # Support leading 'V'
-            - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+            - 'wud.tag.include=^v\d+\.\d+\.\d+$$'  # Support leading 'V'
             - 'wud.link.template=https://github.com/FlareSolverr/FlareSolverr/releases'            
 
     # *******************************************************************
@@ -406,8 +390,7 @@ services:
             radarr:
                 condition: service_started
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
-            # Support leading 'V'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/Unpackerr/unpackerr/releases'            
 
@@ -442,8 +425,7 @@ services:
             vpn:
                 condition: service_healthy
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
-            # Support leading 'V'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/tyzen9/docker-lftp-mirror/releases'  
 
@@ -471,11 +453,80 @@ services:
         depends_on:
             - vpn
         labels:
-            # What's up docker labels (https://getwud.github.io/wud/#/)
-            # Support leading 'V'
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
             - 'wud.tag.include=^\d+\.\d+\.\d+$$'
             - 'wud.link.template=https://github.com/tyzen9/docker-myanonamouse-ip-helper/releases'  
     
+    # *********************************************************************************
+    # volume-backup
+    #   Automated daily backup of Docker named volumes using offen/docker-volume-backup.
+    #   This lightweight service runs in the background, creates a single compressed 
+    #   archive containing all specified volumes, and automatically prunes old backups 
+    #   based on the configured retention period. It ensures data consistency by 
+    #   temporarily stopping labeled containers during the backup process. Backups 
+    #   are stored locally on the host; a separate secure process (e.g., rsync/cron) 
+    #   can be used for off-site transfer.
+    #
+    # *********************************************************************************
+    volume-backup:
+        image: offen/docker-volume-backup:${TAG_OFFEN:-latest}
+        container_name: ${BACKUP_LABEL}-backup
+        restart: unless-stopped
+        environment:
+            - TZ=${TZ_ID:-America/New_York}
+            - BACKUP_CRON_EXPRESSION=${BACKUP_CRON_EXPRESSION:-0 2 * * *}
+            - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-14}
+            - BACKUP_FILENAME=${BACKUP_LABEL}-%Y-%m-%dT%H-%M-%S.tar.gz
+            - BACKUP_STOP_DURING_BACKUP_LABEL=${BACKUP_LABEL}
+        volumes:
+            # Volumes to backup
+            - prowlarr-config:/backup/prowlarr-config:ro                     
+            - qbittorrent-config:/backup/qbittorrent-config:ro                     
+            - recyclarr-config:/backup/recyclarr-config:ro                     
+            - radarr-config:/backup/radarr-config:ro                     
+            - bazarr-config:/backup/bazarr-config:ro                     
+            - sonarr-config:/backup/sonarr-config:ro                     
+            - readarr-config:/backup/readarr-config:ro                     
+            # Local backup location - use a separate secure transfer process to move backups to another host
+            - ${BACKUP_LOCAL_PATH}:/archive                     
+            # Time synch with host to ensure accurate CRON scheduling
+            - /etc/localtime:/etc/localtime:ro               
+            - /etc/timezone:/etc/timezone:ro                 
+            # Allows backup container to control other containers
+            - /var/run/docker.sock:/var/run/docker.sock:ro   
+
+        labels:
+            # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -------------
+            # Support leading 'V'
+            - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
+            - 'wud.link.template=https://github.com/offen/docker-volume-backup/releases'  
+    
+    # # *****************************************************************************
+    # # readarr - Audiobook and eBook searching.  
+    # #
+    # #   Warning: Currently readarr has no active devs, and the servarr team 
+    # #            would like someone to take over readarr development. It still
+    # #            works, but not as well as it once did.
+    # # 
+    # #   Action: if you are not using this, then comment it out
+    # # *****************************************************************************
+    # readarr:
+    #     # Readarr is currently releasing from their "develop" branch
+    #     image: lscr.io/linuxserver/readarr:${TAG_READARR:-latest}
+    #     container_name: readarr
+    #     restart: unless-stopped
+    #     environment:
+    #         - TZ=${TZ_ID}
+    #         - PUID=${PUID:-1000}
+    #         - PGID=${PGID:-1000}
+    #     volumes:
+    #         - readarr-config:/config
+    #         - ${BOOKS_VOLUME}:/books
+    #         - ${DOWNLOADS_VOLUME}:/downloads
+    #     network_mode: "service:vpn"
+    #     depends_on:
+    #         - vpn
+    #         - prowlarr
 
 volumes:
     flaresolverr-config:
