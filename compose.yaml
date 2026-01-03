@@ -45,6 +45,8 @@ services:
     volumes:
       - pia-token:/pia
       - pia-portnumber:/pia-shared
+      - /etc/localtime:/etc/localtime:ro               
+      - /etc/timezone:/etc/timezone:ro                 
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -97,25 +99,25 @@ services:
   #          one place.
   # *****************************************************************************
   prowlarr:
-      image: linuxserver/prowlarr:${TAG_PROWLARR:-latest}
-      container_name: prowlarr
-      restart: always
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-      volumes:
-        - prowlarr-config:/config
-      network_mode: "service:vpn"
-      depends_on:
-        vpn:
-          condition: service_healthy
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Prowlarr/Prowlarr/releases'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: linuxserver/prowlarr:${TAG_PROWLARR:-latest}
+    container_name: prowlarr
+    restart: always
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - prowlarr-config:/config
+    network_mode: "service:vpn"
+    depends_on:
+      vpn:
+        condition: service_healthy
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Prowlarr/Prowlarr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # sonarr - TV show searching.
@@ -123,27 +125,27 @@ services:
   #   Action: if you are not using this, then comment it out
   # *****************************************************************************
   sonarr:
-      image: linuxserver/sonarr:${TAG_SONARR:-latest}
-      container_name: sonarr
-      restart: unless-stopped
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-      volumes:
-        - sonarr-config:/config
-        - ${TV_VOLUME}:/tv
-        - ${DOWNLOADS_VOLUME}:/downloads
-      network_mode: "service:vpn"
-      depends_on:
-        - vpn
-        - prowlarr
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Sonarr/Sonarr/releases'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: linuxserver/sonarr:${TAG_SONARR:-latest}
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - sonarr-config:/config
+      - ${TV_VOLUME}:/tv
+      - ${DOWNLOADS_VOLUME}:/downloads
+    network_mode: "service:vpn"
+    depends_on:
+      - vpn
+      - prowlarr
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Sonarr/Sonarr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # radarr - Movie searching.
@@ -151,27 +153,27 @@ services:
   #   Action: if you are not using this, then comment it out
   # *****************************************************************************
   radarr:
-      image: linuxserver/radarr:${TAG_RADARR:-latest}
-      container_name: radarr
-      restart: unless-stopped
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-      volumes:
-        - radarr-config:/config
-        - ${MOVIE_VOLUME}:/movies
-        - ${DOWNLOADS_VOLUME}:/downloads
-      network_mode: "service:vpn"
-      depends_on:
-        - vpn
-        - prowlarr
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: linuxserver/radarr:${TAG_RADARR:-latest}
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - radarr-config:/config
+      - ${MOVIE_VOLUME}:/movies
+      - ${DOWNLOADS_VOLUME}:/downloads
+    network_mode: "service:vpn"
+    depends_on:
+      - vpn
+      - prowlarr
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # bazarr - Movie subtitles.
@@ -179,26 +181,26 @@ services:
   #   Action: if you are not using this, then comment it out
   # *****************************************************************************
   bazarr:
-      image: linuxserver/bazarr:${TAG_BAZARR:-latest}
-      container_name: bazarr
-      restart: unless-stopped
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-      volumes:
-        - bazarr-config:/config
-        - ${MOVIE_VOLUME}:/movies
-        - ${TV_VOLUME}:/tv
-      network_mode: "service:vpn"
-      depends_on:
-        - vpn
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: linuxserver/bazarr:${TAG_BAZARR:-latest}
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - bazarr-config:/config
+      - ${MOVIE_VOLUME}:/movies
+      - ${TV_VOLUME}:/tv
+    network_mode: "service:vpn"
+    depends_on:
+      - vpn
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # recyclarr - Automatically sync TRaSH guides to your Sonarr and Radarr instances.
@@ -206,24 +208,24 @@ services:
   #   Action: if you are not using this, then comment it out
   # *****************************************************************************
   recyclarr:
-      image: ghcr.io/recyclarr/recyclarr:${TAG_RECYCLARR:-latest}
-      container_name: recyclarr
-      restart: unless-stopped
-      environment:
-        - TZ=${TZ_ID}
-        - CRON_SCHEDULE=0 4 * * *   # Runs daily at 4:00 AM (change time as needed, e.g., 30 3 for 3:30 AM)
-      user: ${PUID:-1000}:${PGID:-1000}
-      volumes:
-        - recyclarr-config:/config
-      network_mode: "service:vpn"
-      depends_on:
-        - vpn
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: ghcr.io/recyclarr/recyclarr:${TAG_RECYCLARR:-latest}
+    container_name: recyclarr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ_ID}
+      - CRON_SCHEDULE=0 4 * * *   # Runs daily at 4:00 AM (change time as needed, e.g., 30 3 for 3:30 AM)
+    user: ${PUID:-1000}:${PGID:-1000}
+    volumes:
+      - recyclarr-config:/config
+    network_mode: "service:vpn"
+    depends_on:
+      - vpn
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
           
 
   # *****************************************************************************
@@ -240,27 +242,27 @@ services:
   #
   # *****************************************************************************
   qbittorrent:
-      image: linuxserver/qbittorrent:${TAG_QBT:-latest}
-      container_name: qbittorrent
-      restart: always
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-        - WEBUI_PORT=${QBT_WEB_PORT:-8080}
-      volumes:
-        - qbittorrent-config:/config
-        - ${DOWNLOADS_VOLUME}:/downloads
-      network_mode: "service:vpn"
-      depends_on:
-        vpn:
-            condition: service_healthy
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'  # Match a single digit first
-        - 'wud.link.template=https://www.qbittorrent.org/news'
-        # Offen Backup Labels -------------------------------------------------
-        - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+    image: linuxserver/qbittorrent:${TAG_QBT:-latest}
+    container_name: qbittorrent
+    restart: always
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - WEBUI_PORT=${QBT_WEB_PORT:-8080}
+    volumes:
+      - qbittorrent-config:/config
+      - ${DOWNLOADS_VOLUME}:/downloads
+    network_mode: "service:vpn"
+    depends_on:
+      vpn:
+          condition: service_healthy
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'  # Match a single digit first
+      - 'wud.link.template=https://www.qbittorrent.org/news'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # qbittorrent-port-helper (Steve Theisen)
@@ -277,25 +279,25 @@ services:
   #           "port.dat" in a shared volume this can use
   # *****************************************************************************
   qbittorrent-port-helper:
-      image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
-      container_name: qbittorrent-port-helper
-      restart: always
-      init: true
-      volumes:
-        - pia-portnumber:/vpn-data
-      environment:
-        - TZ=${TZ_ID}
-        - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
-        - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
-        - QBITTORRENT_PORT_NUMBER=${QBITTORRENT_PORT_NUMBER:-8080}
-        - QBITTORRENT_URL=${QBITTORRENT_URL}
-      network_mode: "service:vpn"
-      depends_on:
-        - qbittorrent
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
+    image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
+    container_name: qbittorrent-port-helper
+    restart: always
+    init: true
+    volumes:
+      - pia-portnumber:/vpn-data
+    environment:
+      - TZ=${TZ_ID}
+      - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+      - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+      - QBITTORRENT_PORT_NUMBER=${QBITTORRENT_PORT_NUMBER:-8080}
+      - QBITTORRENT_URL=${QBITTORRENT_URL}
+    network_mode: "service:vpn"
+    depends_on:
+      - qbittorrent
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
 
   # *******************************************************************
   # Stripparr  (Mike Nye)
@@ -308,22 +310,22 @@ services:
   #           https://github.com/mikenye/docker-striparr#sonarrradarr-configuration 
   # *******************************************************************
   striparr:
-      image: mikenye/striparr:${TAG_STRIPARR:-latest}
-      container_name: striparr
-      restart: always
-      environment:
-        - TZ=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}
-      volumes:
-        - ${MOVIE_VOLUME}:/movies
-        - ${TV_VOLUME}:/tv
-      network_mode: "service:vpn"
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=latest'
-        - 'wud.watch.digest=true'           
-        - 'wud.link.template=https://github.com/mikenye/docker-striparr/releases' 
+    image: mikenye/striparr:${TAG_STRIPARR:-latest}
+    container_name: striparr
+    restart: always
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - ${MOVIE_VOLUME}:/movies
+      - ${TV_VOLUME}:/tv
+    network_mode: "service:vpn"
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=latest'
+      - 'wud.watch.digest=true'           
+      - 'wud.link.template=https://github.com/mikenye/docker-striparr/releases' 
 
   # *******************************************************************
   # flaresolverr 
@@ -337,21 +339,21 @@ services:
   #           https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/ 
   # *******************************************************************
   flaresolverr:
-      image: flaresolverr/flaresolverr:${TAG_FLARESOLVER:-latest}
-      container_name: flaresolverr
-      restart: always
-      environment:
-        - TZ=${TZ_ID}
-        - LOG_LEVEL=${LOG_LEVEL:-info}
-        - LOG_HTML=${LOG_HTML:-false}
-        - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-      volumes:
-        - flaresolverr-config:/config
-      network_mode: "service:vpn"
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^v\d+\.\d+\.\d+$$'  # Support leading 'V'
-        - 'wud.link.template=https://github.com/FlareSolverr/FlareSolverr/releases'            
+    image: flaresolverr/flaresolverr:${TAG_FLARESOLVER:-latest}
+    container_name: flaresolverr
+    restart: always
+    environment:
+      - TZ=${TZ_ID}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+    volumes:
+      - flaresolverr-config:/config
+    network_mode: "service:vpn"
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^v\d+\.\d+\.\d+$$'  # Support leading 'V'
+      - 'wud.link.template=https://github.com/FlareSolverr/FlareSolverr/releases'            
 
   # *******************************************************************
   # unpackerr
@@ -367,32 +369,32 @@ services:
   #             media directory paths.
   # *******************************************************************
   unpackerr:
-      image: golift/unpackerr:${TAG_UNPACKERR:-latest}
-      container_name: unpackerr
-      restart: always
-      user: ${PUID:-1000}:${PGID:-1000}
-      environment:
-        - TZ=${TZ_ID}
-        - LOG_LEVEL=${LOG_LEVEL:-info}
-        - UN_LOG_FILE=/downloads/logs/unpackerr.log
-        - UN_SONARR_0_URL=${SONARR_URL:-http://localhost}:${SONARR_WEB_PORT:-8989}
-        - UN_SONARR_0_API_KEY=${SONARR_API_KEY}
-        - UN_RADARR_0_URL=${RADARR_URL:-http://localhost}:${RADARR_WEB_PORT:-7878}
-        - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
-      network_mode: "service:vpn"
-      volumes:
-        - ${DOWNLOADS_VOLUME}:/downloads
-      depends_on:
-        vpn:
-          condition: service_healthy
-        sonarr:
-          condition: service_started
-        radarr:
-          condition: service_started
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/Unpackerr/unpackerr/releases'            
+    image: golift/unpackerr:${TAG_UNPACKERR:-latest}
+    container_name: unpackerr
+    restart: always
+    user: ${PUID:-1000}:${PGID:-1000}
+    environment:
+      - TZ=${TZ_ID}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - UN_LOG_FILE=/downloads/logs/unpackerr.log
+      - UN_SONARR_0_URL=${SONARR_URL:-http://localhost}:${SONARR_WEB_PORT:-8989}
+      - UN_SONARR_0_API_KEY=${SONARR_API_KEY}
+      - UN_RADARR_0_URL=${RADARR_URL:-http://localhost}:${RADARR_WEB_PORT:-7878}
+      - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
+    network_mode: "service:vpn"
+    volumes:
+      - ${DOWNLOADS_VOLUME}:/downloads
+    depends_on:
+      vpn:
+        condition: service_healthy
+      sonarr:
+        condition: service_started
+      radarr:
+        condition: service_started
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/Unpackerr/unpackerr/releases'            
 
 
   # *****************************************************************************
@@ -405,29 +407,30 @@ services:
   #  Action: If you do not use a remote seedbox, you can comment this service out
   # *****************************************************************************
   lftp-mirror:
-      image: tyzen9/lftp-mirror:${TAG_LFTP_MIRROR:-latest}
-      container_name: lftp-mirror
-      restart: always
-      init: true
-      environment:
-        - TZ_ID=${TZ_ID}
-        - PUID=${PUID:-1000}
-        - PGID=${PGID:-1000}            
-        - SOURCE_HOSTNAME=${SOURCE_HOSTNAME}
-        - SSH_USERNAME=${SSH_USERNAME}
-        - SSH_PASSWORD=${SSH_PASSWORD}
-        - SOURCE_DIR=${SOURCE_DIR}
-        - SOURCE_EXCLUDES=${SOURCE_EXCLUDES}
-      volumes:
-        - ${DOWNLOADS_VOLUME}:/downloads
-      network_mode: "service:vpn"
-      depends_on:
-        vpn:
-          condition: service_healthy
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/tyzen9/docker-lftp-mirror/releases'  
+    image: tyzen9/lftp-mirror:${TAG_LFTP_MIRROR:-latest}
+    container_name: lftp-mirror
+    restart: always
+    init: true
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}            
+      - SOURCE_HOSTNAME=${SOURCE_HOSTNAME}
+      - SSH_USERNAME=${SSH_USERNAME}
+      - SSH_PASSWORD=${SSH_PASSWORD}
+      - SOURCE_DIR=${SOURCE_DIR}
+      - SOURCE_EXCLUDES=${SOURCE_EXCLUDES}
+    volumes:
+      - ${DOWNLOADS_VOLUME}:/downloads
+      - /etc/localtime:/etc/localtime:ro               
+      - /etc/timezone:/etc/timezone:ro                 
+    network_mode: "service:vpn"
+    depends_on:
+      vpn:
+        condition: service_healthy
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/tyzen9/docker-lftp-mirror/releases'  
   
   # *********************************************************************************
   # volume-backup
@@ -441,40 +444,39 @@ services:
   #
   # *********************************************************************************
   volume-backup:
-      image: offen/docker-volume-backup:${TAG_OFFEN:-latest}
-      container_name: ${BACKUP_LABEL}-backup
-      restart: unless-stopped
-      environment:
-        - TZ=${TZ_ID:-America/New_York}
-        - BACKUP_CRON_EXPRESSION=${BACKUP_CRON_EXPRESSION:-0 2 * * *}
-        - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-14}
-        - BACKUP_FILENAME=${BACKUP_LABEL}-%Y-%m-%dT%H-%M-%S.tar.gz
-        - BACKUP_STOP_DURING_BACKUP_LABEL=${BACKUP_LABEL}
-        - NOTIFICATION_LEVEL=${BACKUP_NOTIFICATION_LEVEL:-error}
-        - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URLS}          # Comma-separated list of URLs      
-      volumes:
-        # Volumes to backup
-        - prowlarr-config:/backup/prowlarr-config:ro                     
-        - qbittorrent-config:/backup/qbittorrent-config:ro                     
-        - recyclarr-config:/backup/recyclarr-config:ro                     
-        - radarr-config:/backup/radarr-config:ro                     
-        - bazarr-config:/backup/bazarr-config:ro                     
-        - sonarr-config:/backup/sonarr-config:ro                     
-        - readarr-config:/backup/readarr-config:ro                     
-        # Local backup location - use a separate secure transfer process to move backups to another host
-        - ${BACKUP_LOCAL_TMP_PATH}:/tmp  # Assign a specific tmp dir on the host.  Comment this out to use /tmp
-        - ${BACKUP_LOCAL_PATH}:/archive                     
-        # Time synch with host to ensure accurate CRON scheduling
-        - /etc/localtime:/etc/localtime:ro               
-        - /etc/timezone:/etc/timezone:ro                 
-        # Allows backup container to control other containers
-        - /var/run/docker.sock:/var/run/docker.sock:ro   
+    image: offen/docker-volume-backup:${TAG_OFFEN:-latest}
+    container_name: ${BACKUP_LABEL}-backup
+    restart: unless-stopped
+    environment:
+      - BACKUP_CRON_EXPRESSION=${BACKUP_CRON_EXPRESSION:-0 2 * * *}
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-14}
+      - BACKUP_FILENAME=${BACKUP_LABEL}-%Y-%m-%dT%H-%M-%S.tar.gz
+      - BACKUP_STOP_DURING_BACKUP_LABEL=${BACKUP_LABEL}
+      - NOTIFICATION_LEVEL=${BACKUP_NOTIFICATION_LEVEL:-error}
+      - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URLS}          # Comma-separated list of URLs      
+    volumes:
+      # Volumes to backup
+      - prowlarr-config:/backup/prowlarr-config:ro                     
+      - qbittorrent-config:/backup/qbittorrent-config:ro                     
+      - recyclarr-config:/backup/recyclarr-config:ro                     
+      - radarr-config:/backup/radarr-config:ro                     
+      - bazarr-config:/backup/bazarr-config:ro                     
+      - sonarr-config:/backup/sonarr-config:ro                     
+      - readarr-config:/backup/readarr-config:ro                     
+      # Local backup location - use a separate secure transfer process to move backups to another host
+      - ${BACKUP_LOCAL_TMP_PATH}:/tmp  # Assign a specific tmp dir on the host.  Comment this out to use /tmp
+      - ${BACKUP_LOCAL_PATH}:/archive                     
+      # Time synch with host to ensure accurate CRON scheduling
+      - /etc/localtime:/etc/localtime:ro               
+      - /etc/timezone:/etc/timezone:ro                 
+      # Allows backup container to control other containers
+      - /var/run/docker.sock:/var/run/docker.sock:ro   
 
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -------------
-        # Support leading 'V'
-        - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/offen/docker-volume-backup/releases'  
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -------------
+      # Support leading 'V'
+      - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/offen/docker-volume-backup/releases'  
   
   # # *****************************************************************************
   # # readarr - Audiobook and eBook searching.  
