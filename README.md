@@ -39,7 +39,7 @@ The docker-pia-servarr stack contains everything you need for a stable Servarr e
 1. [Bazarr](https://www.bazarr.media/) - a companion application to Sonarr and Radarr that manages and downloads subtitles based on your requirements.
 1. [Recyclarr](https://recyclarr.dev/) - Automatically synchronize [TRaSH Guides](https://trash-guides.info/) to Sonarr and Radarr
 1. [lftp-mirror](https://github.com/tyzen9/docker-lftp-mirror) - a container for mirroring the contents of a source server to a target server using an ssh tunnel and lftp to perform efficient file transfers through a secure connection.
-1. [Myanonamouse (MAM) Dynamic Ip Helper](https://github.com/tyzen9/docker-myanonamouse-ip-helper) - scripting to keep a dynamic [myanonamouse](https://www.myanonamouse.net/) dynamic seedbox IP up to date.
+1. [Offen Docker Volume Backups](https://offen.github.io/docker-volume-backup/) - Scheduled backups of all the volumes.
 
 1. [Readarr](https://readarr.com/) (❌Sunset) - an ebook and audiobook management application designed for automation and organization, similar in concept to Sonarr for TV shows or Radarr for movies. It allows users to automatically manage their library by searching for new releases, downloading them from various sources, and organizing them into a predefined directory structure. 
 
