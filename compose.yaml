@@ -428,34 +428,6 @@ services:
         # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
         - 'wud.tag.include=^\d+\.\d+\.\d+$$'
         - 'wud.link.template=https://github.com/tyzen9/docker-lftp-mirror/releases'  
-
-  # *****************************************************************************
-  # mam-ip-helper (Steve Theisen)
-  #    This is a simple container that pings myanonamouse.net once an hour
-  #    to update the VPN ipaddress being used for downloading. This is 
-  #    important to keep connectivity for seeding ratios etc.  
-  #
-  #  See: https://github.com/tyzen9/docker-myanonamouse-ip-helper
-  #
-  #  Action: If you do not use myanonamouse.net, you can comment this service
-  #          out, or just neglect to provide a MAM_ID in the environment, 
-  #          and the container will simply exit when it starts
-  # *****************************************************************************
-  mam-ip-helper:
-      image: tyzen9/myanonamouse-ip-helper:${TAG_MAM_HELPER:-latest}
-      container_name: mam-ip-helper
-      restart: always
-      init: true
-      user: ${PUID:-1000}:${PGID:-1000}
-      environment:
-        - MAM_ID=${MAM_ID}
-      network_mode: "service:vpn"
-      depends_on:
-        - vpn
-      labels:
-        # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-        - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-        - 'wud.link.template=https://github.com/tyzen9/docker-myanonamouse-ip-helper/releases'  
   
   # *********************************************************************************
   # volume-backup
