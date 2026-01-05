@@ -484,7 +484,7 @@ services:
       - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URLS}          # Comma-separated list of URLs      
     volumes:
       # Volumes to backup
-      - overseerr-config:/backup/overseerr-config:ro                     
+      # - overseerr-config:/backup/overseerr-config:ro                     
       - prowlarr-config:/backup/prowlarr-config:ro                     
       - qbittorrent-config:/backup/qbittorrent-config:ro                     
       - recyclarr-config:/backup/recyclarr-config:ro                     
