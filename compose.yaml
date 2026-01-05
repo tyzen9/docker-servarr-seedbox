@@ -255,7 +255,7 @@ services:
       - radarr
     labels:
       # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.tag.include=^v[0-9]\.[0-9]+\.[0-9]+$'
       - 'wud.link.template=https://github.com/sct/overseerr/releases'
       # Offen Backup Labels -------------------------------------------------
       - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
