@@ -243,6 +243,10 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
     volumes:
+      ## ~~~ IMPORTANT NOTE ~~~
+      # When using a named volume, Overseearr will show a message on the setup screens
+      # that "The /config volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
+      # It is safe to ignore this message....
       - overseerr-config:/config
     ports:
       - 5055:5055
@@ -484,7 +488,7 @@ services:
       - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URLS}          # Comma-separated list of URLs      
     volumes:
       # Volumes to backup
-      # - overseerr-config:/backup/overseerr-config:ro                     
+      - overseerr-config:/backup/overseerr-config:ro                     
       - prowlarr-config:/backup/prowlarr-config:ro                     
       - qbittorrent-config:/backup/qbittorrent-config:ro                     
       - recyclarr-config:/backup/recyclarr-config:ro                     
