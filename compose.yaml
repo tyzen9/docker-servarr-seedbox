@@ -223,10 +223,38 @@ services:
     labels:
       # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
       - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-      - 'wud.link.template=https://github.com/Radarr/Radarr/releases'
+      - 'wud.link.template=https://github.com/recyclarr/recyclarr/releases'
       # Offen Backup Labels -------------------------------------------------
       - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
           
+  # *****************************************************************************
+  # overseerr - Overseerr is a free and open source software application for managing 
+  # requests for your media library. It integrates with your existing services, 
+  # such as Sonarr, Radarr, and Plex
+  # 
+  #   Action: if you are not using this, then comment it out
+  # *****************************************************************************
+  overseerr:
+    image: linuxserver/overseerr:${TAG_OVERSEERR:-latest}
+    container_name: overseerr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ_ID}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - overseerr-config:/config
+    ports:
+      - 5055:5055
+    depends_on:
+      - sonarr
+      - radarr
+    labels:
+      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+      - 'wud.link.template=https://github.com/sct/overseerr/releases'
+      # Offen Backup Labels -------------------------------------------------
+      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
   # *****************************************************************************
   # qbittorrent
@@ -456,6 +484,7 @@ services:
       - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URLS}          # Comma-separated list of URLs      
     volumes:
       # Volumes to backup
+      - overseerr-config:/backup/overseerr-config:ro                     
       - prowlarr-config:/backup/prowlarr-config:ro                     
       - qbittorrent-config:/backup/qbittorrent-config:ro                     
       - recyclarr-config:/backup/recyclarr-config:ro                     
@@ -507,6 +536,7 @@ services:
 
 volumes:
   flaresolverr-config:
+  overseerr-config:
   pia-token:
   pia-portnumber:
   prowlarr-config:
