@@ -260,76 +260,76 @@ services:
       # Offen Backup Labels -------------------------------------------------
       - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
-  # *****************************************************************************
-  # qbittorrent
-  #    qBittorrent is based on the Qt toolkit and libtorrent-rasterbar 
-  #    library. 
-  #
-  #   See: https://docs.linuxserver.io/images/docker-qbittorrent/
-  #
-  #   Action: If you will ONLY be using a cloud based seedbox then you can
-  #           comment this out. However, local seedboxes can be nice for
-  #           occasional public tracker usage and can be configured separately
-  #           from other seedboxes in *arr apps
-  #
-  # *****************************************************************************
-  qbittorrent:
-    image: linuxserver/qbittorrent:${TAG_QBT:-latest}
-    container_name: qbittorrent
-    restart: always
-    environment:
-      - TZ=${TZ_ID}
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - WEBUI_PORT=${QBT_WEB_PORT:-8080}
-    volumes:
-      - qbittorrent-config:/config
-      - ${DOWNLOADS_VOLUME}:/downloads
-    network_mode: "service:vpn"
-    depends_on:
-      vpn:
-          condition: service_healthy
-    labels:
-      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-      - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'  # Match a single digit first
-      - 'wud.link.template=https://www.qbittorrent.org/news'
-      # Offen Backup Labels -------------------------------------------------
-      - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
+  # # *****************************************************************************
+  # # qbittorrent
+  # #    qBittorrent is based on the Qt toolkit and libtorrent-rasterbar 
+  # #    library. 
+  # #
+  # #   See: https://docs.linuxserver.io/images/docker-qbittorrent/
+  # #
+  # #   Action: If you will ONLY be using a cloud based seedbox then you can
+  # #           comment this out. However, local seedboxes can be nice for
+  # #           occasional public tracker usage and can be configured separately
+  # #           from other seedboxes in *arr apps
+  # #
+  # # *****************************************************************************
+  # qbittorrent:
+  #   image: linuxserver/qbittorrent:${TAG_QBT:-latest}
+  #   container_name: qbittorrent
+  #   restart: always
+  #   environment:
+  #     - TZ=${TZ_ID}
+  #     - PUID=${PUID:-1000}
+  #     - PGID=${PGID:-1000}
+  #     - WEBUI_PORT=${QBT_WEB_PORT:-8080}
+  #   volumes:
+  #     - qbittorrent-config:/config
+  #     - ${DOWNLOADS_VOLUME}:/downloads
+  #   network_mode: "service:vpn"
+  #   depends_on:
+  #     vpn:
+  #         condition: service_healthy
+  #   labels:
+  #     # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+  #     - 'wud.tag.include=^[0-9]\.\d+\.\d+$$'  # Match a single digit first
+  #     - 'wud.link.template=https://www.qbittorrent.org/news'
+  #     # Offen Backup Labels -------------------------------------------------
+  #     - "docker-volume-backup.stop-during-backup=${BACKUP_LABEL}"
 
-  # *****************************************************************************
-  # qbittorrent-port-helper (Steve Theisen)
-  #    Looks for a file named "port.dat", reads the port number in that
-  #    file and uses that to update the Listening Port number used by
-  #    qBittorrent. The PIA image above is configured to drop the "port.dat"
-  #    file into the pia-portnumber volume.
-  #
-  #   See: https://github.com/tyzen9/docker-qbittorrent-port-helper 
-  #
-  #   Action: If you are not using qBittorrent locally you can comment this
-  #           out. If you are not using PIA, then another VPN client will 
-  #           need to be configured to drop its port-forward number into a
-  #           "port.dat" in a shared volume this can use
-  # *****************************************************************************
-  qbittorrent-port-helper:
-    image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
-    container_name: qbittorrent-port-helper
-    restart: always
-    init: true
-    volumes:
-      - pia-portnumber:/vpn-data
-    environment:
-      - TZ=${TZ_ID}
-      - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
-      - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
-      - QBITTORRENT_PORT_NUMBER=${QBITTORRENT_PORT_NUMBER:-8080}
-      - QBITTORRENT_URL=${QBITTORRENT_URL}
-    network_mode: "service:vpn"
-    depends_on:
-      - qbittorrent
-    labels:
-      # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
-      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-      - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
+  # # *****************************************************************************
+  # # qbittorrent-port-helper (Steve Theisen)
+  # #    Looks for a file named "port.dat", reads the port number in that
+  # #    file and uses that to update the Listening Port number used by
+  # #    qBittorrent. The PIA image above is configured to drop the "port.dat"
+  # #    file into the pia-portnumber volume.
+  # #
+  # #   See: https://github.com/tyzen9/docker-qbittorrent-port-helper 
+  # #
+  # #   Action: If you are not using qBittorrent locally you can comment this
+  # #           out. If you are not using PIA, then another VPN client will 
+  # #           need to be configured to drop its port-forward number into a
+  # #           "port.dat" in a shared volume this can use
+  # # *****************************************************************************
+  # qbittorrent-port-helper:
+  #   image: tyzen9/qbittorrent-port-helper:${TAG_QBT_HELPER:-latest}
+  #   container_name: qbittorrent-port-helper
+  #   restart: always
+  #   init: true
+  #   volumes:
+  #     - pia-portnumber:/vpn-data
+  #   environment:
+  #     - TZ=${TZ_ID}
+  #     - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+  #     - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+  #     - QBITTORRENT_PORT_NUMBER=${QBITTORRENT_PORT_NUMBER:-8080}
+  #     - QBITTORRENT_URL=${QBITTORRENT_URL}
+  #   network_mode: "service:vpn"
+  #   depends_on:
+  #     - qbittorrent
+  #   labels:
+  #     # WUD - What's up docker labels (https://getwud.github.io/wud/#/) -----
+  #     - 'wud.tag.include=^\d+\.\d+\.\d+$$'
+  #     - 'wud.link.template=https://github.com/tyzen9/docker-qbittorrent-port-helper/releases'            
 
   # *******************************************************************
   # Stripparr  (Mike Nye)
